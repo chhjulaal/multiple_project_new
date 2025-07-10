@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import "./Drawer.css";
 import { FaCircle, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
+import { bgImg } from "./ontexData";
+
 const Drawer = ({
   isOpen,
   onClose,
@@ -26,8 +28,13 @@ const Drawer = ({
     }
   };
 
+  const { theme } = useContext(bgImg);
+
   return (
-    <div className={`drawer ${isOpen ? "open" : ""}`}>
+    <div
+      className={`drawer ${isOpen ? "open" : ""}`}
+      style={theme ? { color: "black" } : { color: "white" }}
+    >
       <button
         onClick={onClose}
         style={{ borderRadius: "10px", border: "none", float: "right" }}
@@ -46,7 +53,13 @@ const Drawer = ({
             onChange={(e) => searchTodos(e.target.value)}
           />
         </div>
-        <div style={{maxHeight:"125px", overflow:'auto',scrollbarWidth:'none'}}>
+        <div
+          style={{
+            maxHeight: "125px",
+            overflow: "auto",
+            scrollbarWidth: "none",
+          }}
+        >
           {data.length > 0 &&
             data?.map((item, index) => (
               <ul

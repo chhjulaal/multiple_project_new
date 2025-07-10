@@ -19,6 +19,12 @@ import {
   FaCog,
   FaGripLines,
   FaGripVertical,
+  FaBell,
+  FaClock,
+  FaHistory,
+  FaCalendarCheck,
+  FaCriticalRole,
+  FaCheckCircle,
 } from "react-icons/fa";
 import "./Todo.css";
 import Modal from "react-bootstrap/Modal";
@@ -35,7 +41,15 @@ export function Todo() {
   const [bgImage, setBgImage] = useState("");
   const [randomImg, setRandomImg] = useState("");
   const [draggedItemIndex, setDraggedItemIndex] = useState(null);
-  const [theme, setTheme] = useState(true);
+
+  const [theme, setTheme] = useState(() => {
+    const storedTheme = localStorage.getItem("theme");
+    return storedTheme ? JSON.parse(storedTheme) : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("theme", JSON.stringify(theme));
+  }, [theme]);
 
   const handleDragStart = (index) => {
     setDraggedItemIndex(index);
@@ -157,7 +171,7 @@ export function Todo() {
         className="todo-container"
         style={{ backgroundImage: `url(${bgImage})`, ...t }}
       >
-        {shortcut ? <MyAppNav theme={theme} /> : ""}
+        {/* {shortcut ? <MyAppNav theme={theme} /> : ""} */}
         <div className={theme ? "box-containerDark" : "box-containerLight"}>
           <div>
             {times ? (
@@ -215,7 +229,7 @@ export function Todo() {
         <div className={theme ? "todoDark" : "todoLight"}>
           <div className="todoDiv">
             <span>Unfinished todos</span>
-            <FaTimesCircle onClick={toggleDrawer} />
+            <FaHistory onClick={toggleDrawer}></FaHistory>
             <Drawer
               time12Hour={time12Hour}
               setTasks={setTasks}
@@ -347,7 +361,7 @@ export function Todo() {
               className={theme ? "inpToDark" : "inpToLight"}
               onChange={(event) => setTask(event.target.value)}
             />
-            <FaAd onClick={() => getData()} />
+            <FaCheckCircle onClick={() => getData()} />
           </div>
         </div>
         <div className={theme ? "settingDivDark" : "settingDivLight"}>

@@ -10,7 +10,7 @@ export function MyAppNav({ theme }) {
   // console.log(theme)
   return (
     <nav className="nav">
-      <ul className={theme ? "navulDark" : "navulDark"}>
+      <ul className={theme ? "navulDark" : "navulLight"}>
         <li>
           <NavLink to="/" end>
             <FaHome style={color} size={25}></FaHome>
@@ -26,12 +26,12 @@ export function MyAppNav({ theme }) {
             <FaCloud style={color} size={25}></FaCloud>
           </NavLink>
         </li>
-        <li>
+        {/* <li>
           <NavLink to="/weather">
             <FaCloud style={color} size={25}></FaCloud>
           </NavLink>
-        </li>
-        <li>
+        </li> */}
+        {/* <li>
           <NavLink style={color} to="/weather">
             {" "}
             <FaCloud style={color} size={25}></FaCloud>
@@ -53,7 +53,7 @@ export function MyAppNav({ theme }) {
           <NavLink to="/weather">
             <FaPlus style={color} size={25}></FaPlus>
           </NavLink>
-        </li>
+        </li> */}
       </ul>
     </nav>
   );

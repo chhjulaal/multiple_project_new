@@ -9,6 +9,7 @@ import Background from "./Background";
 import { FaImage, FaRegCalendar, FaSlidersH } from "react-icons/fa";
 import { useContext } from "react";
 import { bgImg } from "./ontexData";
+import StarRating from "./StarRating";
 export default function MyVerticallyCenteredModal(props) {
   // console.log(props);
   const [renderComponent, setRenderComponent] = useState(1);
@@ -131,14 +132,12 @@ export default function MyVerticallyCenteredModal(props) {
 
                 <h6 className="mb-0">Background</h6>
               </div>
+
               <div
                 className="my-4"
-                style={{ position: "relative", bottom: "-44px" }}
+                style={{ position: "relative", margin:"0px auto"}}
               >
-                <p className="mb-0" style={{ width: "max-content" }}>
-                  Rate Your Experience:
-                </p>
-                <p className="fs-5 ps-1 my-0">⭐⭐⭐⭐⭐</p>
+                <StarRating />
               </div>
             </div>
           </div>

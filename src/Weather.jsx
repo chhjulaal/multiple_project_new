@@ -17,13 +17,15 @@ export function Weather() {
     stormyImage,
     rainyImage,
     fogImage,
-    cloudyImage,
+    // cloudyImage,
     clearImage,
   ];
   // random bg img
   const [bgImg, setBgImg] = useState("");
   const [data, setData] = useState([]);
   const [city, setCity] = useState("Bhopal");
+  const [selectedData, setSelectedData] = useState("");
+  const [heatindex, setHeatIndex] = useState("24.5");
   useEffect(() => {
     const random = Math.floor(Math.random() * images.length);
     setBgImg(images[random]);
@@ -33,12 +35,12 @@ export function Weather() {
   const handeData = async () => {
     // let city = "indore";
     // const url = const city = "Delhi";
-    const url = `http://api.weatherapi.com/v1/forecast.json?key=271cfb1c9e8b4ee691684650250207&q=${city}&days=7&aqi=no&alerts=no`;
+    const url = `http://api.weatherapi.com/v1/forecast.json?key=70d26bf169fa47eba6d123127250307&q=${city}&days=7&aqi=yes&alerts=yes`;
     try {
       let response = await fetch(url);
       response = await response.json();
       await new Promise((res) => setTimeout(res, 2000));
-      console.log(response);
+      // console.log(response);
       setData(response);
     } catch (error) {
       console.error("Failed to fetch weather data:", error);
@@ -51,12 +53,26 @@ export function Weather() {
 
   // city data
   const handelCity = (e) => {
-    console.log(e);
+    // console.log(e);
     setCity(e);
   };
+
   useEffect(() => {
     handeData();
   }, [city]);
+
+  const handelData = (e) => {
+    setHeatIndex(data?.forecast?.forecastday[e]?.hour[e]?.heatindex_c);
+    setSelectedData(data.forecast.forecastday[e]);
+  };
+  useEffect(() => {
+    console.log(selectedData);
+  }, [selectedData]);
+  useEffect(() => {
+    if (data) {
+      setSelectedData(data?.forecast?.forecastday[0]);
+    }
+  }, [data]);
   return (
     <>
       <div
@@ -66,8 +82,9 @@ export function Weather() {
         <MyAppNav></MyAppNav>
         {/* Weather Nav */}
         <div className="Nav">
-          <div>
-            <h3>Weather App</h3>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <img src="https://cdn-icons-png.flaticon.com/128/9546/9546618.png" style={{width:'45px'}}/>
+            <h3 style={{ color: "pink" }}>Weather App</h3>
           </div>
           <div className="SearchInputDiv">
             <FaSearch size={25} className="mx-2"></FaSearch>
@@ -83,148 +100,151 @@ export function Weather() {
         </div>
 
         {/* Main Content of Weather App */}
-        <div className="main-container">
-          <div className="first">
-            <div className="one">
-              <div className="currentDays">
-                <div className="tempDiv">
-                  <img src={data?.current?.condition?.icon} />
-                  <h2>
-                    <b>{data?.current?.temp_c} °C</b>
-                  </h2>
-                </div>
-                <div style={{ textAlign: "center", margin: "10px 0px" }}>
-                  <h2>
-                    <b>{data?.location?.name}</b>
-                  </h2>
-                  <span>
-                    {" "}
-                    {data?.location?.region} , {data?.location?.country}
-                  </span>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    margin: " 25px 0px 0px 10px",
-                  }}
-                >
-                  <h6>{data?.location?.localtime}</h6>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    margin: "10px 0px",
-                    gap: "15px",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "140px",
-                      background: "#2361e5",
-                      textAlign: "center",
-                      margin: "10px 0px",
-                      borderRadius: "10px",
-                      padding: "10px 0px 0px 0px",
-                    }}
-                  >
-                    <h6>Wind Speed</h6>
-                    <h5>{data?.current?.wind_kph}</h5>
+        {selectedData == undefined ? (
+          <div id="preloader">
+            <h1>Loading....</h1>
+          </div>
+        ) : (
+          <div className="main-container">
+            <div className="first">
+              <div className="one">
+                <div className="currentDays">
+                  <div className="tempDiv">
+                    <img src={selectedData?.day?.condition?.icon} />
+                    <h2>
+                      <b>{selectedData?.day?.maxtemp_c} °C</b>
+                    </h2>
+                  </div>
+                  <div style={{ textAlign: "center", margin: "10px 0px" }}>
+                    <h2>
+                      <b>{data?.location?.name}</b>
+                    </h2>
+                    <span>
+                      {" "}
+                      {data?.location?.region} , {data?.location?.country}
+                    </span>
                   </div>
                   <div
                     style={{
-                      width: "140px",
-                      background: "#15a148",
-                      textAlign: "center",
-                      margin: "10px 0px",
-                      borderRadius: "10px",
-                      padding: "10px 0px 0px 0px",
+                      display: "flex",
+                      justifyContent: "space-around",
+                      margin: " 0px 0px 0px 10px",
                     }}
                   >
-                    <h6>Humidity</h6>
-                    <h5>{data?.current?.humidity}</h5>
+                    <h6>{selectedData?.date}</h6>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-around",
+                      margin: "10px 0px",
+                      gap: "15px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "140px",
+                        // background: "#2361e5",
+                        textAlign: "center",
+                        margin: "10px 0px",
+                        borderRadius: "10px",
+                        padding: "10px 0px 0px 0px",
+                        // border: "1px solid black",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          margin: "5px",
+                        }}
+                      >
+                        <h6>Wind Speed</h6>
+                        <h6>{selectedData?.day?.maxwind_kph}</h6>
+                      </div>
+                      <img
+                        style={{ width: "50px" }}
+                        src="https://cdn-icons-png.flaticon.com/128/5532/5532989.png"
+                      />
+                    </div>
+                    <div
+                      style={{
+                        width: "140px",
+                        // background: "#15a148",
+                        textAlign: "center",
+                        margin: "10px 0px",
+                        borderRadius: "10px",
+                        padding: "10px 0px 0px 0px",
+                        // border: "1px solid black",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          margin: "5px",
+                        }}
+                      >
+                        <h6>Humidity</h6>
+                        <h6>{selectedData?.day?.avghumidity}</h6>
+                      </div>
+                      <img
+                        style={{ width: "50px", marginBottom: "21px" }}
+                        src="https://cdn-icons-png.flaticon.com/128/13945/13945026.png"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "0px 10px",
+                      margin: "10px 0px",
+                    }}
+                  >
+                    <h6>heat index</h6>
+                    <h6>{heatindex}</h6>
+                  </div>
+                  <hr style={{ margin: "4px 0px" }}></hr>
+                  <div style={{ textAlign: "center", marginBottom: "0px" }}>
+                    <h5>{selectedData?.day?.condition?.text}</h5>
                   </div>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    padding: "0px 10px",
-                    margin: "10px 0px",
-                  }}
-                >
-                  <h5>heat index</h5>
-                  <h5>{data?.current?.heatindex_c}</h5>
-                </div>
-                <hr></hr>
-                <div style={{ textAlign: "center", marginBottom: "20px" }}>
-                  <h2>{data?.current?.condition?.text}</h2>
-                </div>
               </div>
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
-              <div className="DivDays">
-                <div className="Days">
-                  <h5>Sunday</h5>
-                  <hr></hr>
-                  <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAAdFJREFUeNrt2+1tgzAQBmBGYARGYAQWiNQRMkJGYARGYIRsUEbwX/5lBDa4niMrQpSqYN8d/jikV2oS9YwfwtmoagUAVcmpFEABFEABFGD7pucxz3ODGTAGA5sY91lTCR8iAG5ycDB9NgA4mfqPK/5f7O/USQMETP6DkDrAEDB5sduBBcA1PCDIwt0YuQAGIgBwtXqu1YMLwBACHIaKCQAuyunVgxzAdX9IBSFHgFO3Q263wDqNOAAO2hKvAOzfAhIAt+4/I5n4qZ1kMAAO1LkNC8QWdgA3eYg1rADua7+UDDDFPHlWANftIcHYi3anABgTBVjvFpsQgFfiAJ9HbV8AyCTmNEAke33K3EsHmEq+Bd4ptQkGAYylA7RFA6SyFT6YZ7YPQyzLYG6H2J/HFUABCgK4fc8tpsdM9mffk5OoQw6AA3QYWKX3PGmROhwAZjPg5HniInVIAbD4YzOYzehx0mJ1yACwcI1ZNoPZ1/XJkxatQwkw7mg/PK6aaB0SgJ1GY2MIGhZ7HSoAszNgR9Cw2OsEA6TY+MgAUm18lABJNj5KgCm0YV1dJxSgD21YV9cJBWjdQC/MV+DDyiV19B8mFEABFEABFEABFEABFOB3fgDsHp230RVQOwAAAABJRU5ErkJggg=="
-                    style={{ width: "60px" }}
-                  />
-                  <h6>37.0*C</h6>
-                </div>
-                <div className="Days">
-                  <h5>Sunday</h5>
-                  <hr></hr>
-                  <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAAdFJREFUeNrt2+1tgzAQBmBGYARGYAQWiNQRMkJGYARGYIRsUEbwX/5lBDa4niMrQpSqYN8d/jikV2oS9YwfwtmoagUAVcmpFEABFEABFGD7pucxz3ODGTAGA5sY91lTCR8iAG5ycDB9NgA4mfqPK/5f7O/USQMETP6DkDrAEDB5sduBBcA1PCDIwt0YuQAGIgBwtXqu1YMLwBACHIaKCQAuyunVgxzAdX9IBSFHgFO3Q263wDqNOAAO2hKvAOzfAhIAt+4/I5n4qZ1kMAAO1LkNC8QWdgA3eYg1rADua7+UDDDFPHlWANftIcHYi3anABgTBVjvFpsQgFfiAJ9HbV8AyCTmNEAke33K3EsHmEq+Bd4ptQkGAYylA7RFA6SyFT6YZ7YPQyzLYG6H2J/HFUABCgK4fc8tpsdM9mffk5OoQw6AA3QYWKX3PGmROhwAZjPg5HniInVIAbD4YzOYzehx0mJ1yACwcI1ZNoPZ1/XJkxatQwkw7mg/PK6aaB0SgJ1GY2MIGhZ7HSoAszNgR9Cw2OsEA6TY+MgAUm18lABJNj5KgCm0YV1dJxSgD21YV9cJBWjdQC/MV+DDyiV19B8mFEABFEABFEABFEABFOB3fgDsHp230RVQOwAAAABJRU5ErkJggg=="
-                    style={{ width: "60px" }}
-                  />
-                  <h6>37.0*C</h6>
-                </div>{" "}
-                <div className="Days">
-                  <h5>Sunday</h5>
-                  <hr></hr>
-                  <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAAdFJREFUeNrt2+1tgzAQBmBGYARGYAQWiNQRMkJGYARGYIRsUEbwX/5lBDa4niMrQpSqYN8d/jikV2oS9YwfwtmoagUAVcmpFEABFEABFGD7pucxz3ODGTAGA5sY91lTCR8iAG5ycDB9NgA4mfqPK/5f7O/USQMETP6DkDrAEDB5sduBBcA1PCDIwt0YuQAGIgBwtXqu1YMLwBACHIaKCQAuyunVgxzAdX9IBSFHgFO3Q263wDqNOAAO2hKvAOzfAhIAt+4/I5n4qZ1kMAAO1LkNC8QWdgA3eYg1rADua7+UDDDFPHlWANftIcHYi3anABgTBVjvFpsQgFfiAJ9HbV8AyCTmNEAke33K3EsHmEq+Bd4ptQkGAYylA7RFA6SyFT6YZ7YPQyzLYG6H2J/HFUABCgK4fc8tpsdM9mffk5OoQw6AA3QYWKX3PGmROhwAZjPg5HniInVIAbD4YzOYzehx0mJ1yACwcI1ZNoPZ1/XJkxatQwkw7mg/PK6aaB0SgJ1GY2MIGhZ7HSoAszNgR9Cw2OsEA6TY+MgAUm18lABJNj5KgCm0YV1dJxSgD21YV9cJBWjdQC/MV+DDyiV19B8mFEABFEABFEABFEABFOB3fgDsHp230RVQOwAAAABJRU5ErkJggg=="
-                    style={{ width: "60px" }}
-                  />
-                  <h6>37.0*C</h6>
-                </div>{" "}
-              </div>
-              <div className="DivDays">
-                <div className="Days">
-                  <h5>Sunday</h5>
-                  <hr></hr>
-                  <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAAdFJREFUeNrt2+1tgzAQBmBGYARGYAQWiNQRMkJGYARGYIRsUEbwX/5lBDa4niMrQpSqYN8d/jikV2oS9YwfwtmoagUAVcmpFEABFEABFGD7pucxz3ODGTAGA5sY91lTCR8iAG5ycDB9NgA4mfqPK/5f7O/USQMETP6DkDrAEDB5sduBBcA1PCDIwt0YuQAGIgBwtXqu1YMLwBACHIaKCQAuyunVgxzAdX9IBSFHgFO3Q263wDqNOAAO2hKvAOzfAhIAt+4/I5n4qZ1kMAAO1LkNC8QWdgA3eYg1rADua7+UDDDFPHlWANftIcHYi3anABgTBVjvFpsQgFfiAJ9HbV8AyCTmNEAke33K3EsHmEq+Bd4ptQkGAYylA7RFA6SyFT6YZ7YPQyzLYG6H2J/HFUABCgK4fc8tpsdM9mffk5OoQw6AA3QYWKX3PGmROhwAZjPg5HniInVIAbD4YzOYzehx0mJ1yACwcI1ZNoPZ1/XJkxatQwkw7mg/PK6aaB0SgJ1GY2MIGhZ7HSoAszNgR9Cw2OsEA6TY+MgAUm18lABJNj5KgCm0YV1dJxSgD21YV9cJBWjdQC/MV+DDyiV19B8mFEABFEABFEABFEABFOB3fgDsHp230RVQOwAAAABJRU5ErkJggg=="
-                    style={{ width: "60px" }}
-                  />
-                  <h6>37.0*C</h6>
-                </div>{" "}
-                <div className="Days">
-                  <h5>Sunday</h5>
-                  <hr></hr>
-                  <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAAdFJREFUeNrt2+1tgzAQBmBGYARGYAQWiNQRMkJGYARGYIRsUEbwX/5lBDa4niMrQpSqYN8d/jikV2oS9YwfwtmoagUAVcmpFEABFEABFGD7pucxz3ODGTAGA5sY91lTCR8iAG5ycDB9NgA4mfqPK/5f7O/USQMETP6DkDrAEDB5sduBBcA1PCDIwt0YuQAGIgBwtXqu1YMLwBACHIaKCQAuyunVgxzAdX9IBSFHgFO3Q263wDqNOAAO2hKvAOzfAhIAt+4/I5n4qZ1kMAAO1LkNC8QWdgA3eYg1rADua7+UDDDFPHlWANftIcHYi3anABgTBVjvFpsQgFfiAJ9HbV8AyCTmNEAke33K3EsHmEq+Bd4ptQkGAYylA7RFA6SyFT6YZ7YPQyzLYG6H2J/HFUABCgK4fc8tpsdM9mffk5OoQw6AA3QYWKX3PGmROhwAZjPg5HniInVIAbD4YzOYzehx0mJ1yACwcI1ZNoPZ1/XJkxatQwkw7mg/PK6aaB0SgJ1GY2MIGhZ7HSoAszNgR9Cw2OsEA6TY+MgAUm18lABJNj5KgCm0YV1dJxSgD21YV9cJBWjdQC/MV+DDyiV19B8mFEABFEABFEABFEABFOB3fgDsHp230RVQOwAAAABJRU5ErkJggg=="
-                    style={{ width: "60px" }}
-                  />
-                  <h6>37.0*C</h6>
-                </div>{" "}
-                <div className="Days">
-                  <h5>Sunday</h5>
-                  <hr></hr>
-                  <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAAdFJREFUeNrt2+1tgzAQBmBGYARGYAQWiNQRMkJGYARGYIRsUEbwX/5lBDa4niMrQpSqYN8d/jikV2oS9YwfwtmoagUAVcmpFEABFEABFGD7pucxz3ODGTAGA5sY91lTCR8iAG5ycDB9NgA4mfqPK/5f7O/USQMETP6DkDrAEDB5sduBBcA1PCDIwt0YuQAGIgBwtXqu1YMLwBACHIaKCQAuyunVgxzAdX9IBSFHgFO3Q263wDqNOAAO2hKvAOzfAhIAt+4/I5n4qZ1kMAAO1LkNC8QWdgA3eYg1rADua7+UDDDFPHlWANftIcHYi3anABgTBVjvFpsQgFfiAJ9HbV8AyCTmNEAke33K3EsHmEq+Bd4ptQkGAYylA7RFA6SyFT6YZ7YPQyzLYG6H2J/HFUABCgK4fc8tpsdM9mffk5OoQw6AA3QYWKX3PGmROhwAZjPg5HniInVIAbD4YzOYzehx0mJ1yACwcI1ZNoPZ1/XJkxatQwkw7mg/PK6aaB0SgJ1GY2MIGhZ7HSoAszNgR9Cw2OsEA6TY+MgAUm18lABJNj5KgCm0YV1dJxSgD21YV9cJBWjdQC/MV+DDyiV19B8mFEABFEABFEABFEABFOB3fgDsHp230RVQOwAAAABJRU5ErkJggg=="
-                    style={{ width: "60px" }}
-                  />
-                  <h6>37.0*C</h6>
-                </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  marginTop: "50px",
+                }}
+              >
+                {data?.forecast?.forecastday?.map((item, index) => (
+                  <div
+                    className="Days"
+                    key={index}
+                    onClick={() => handelData(index)}
+                  >
+                    <h6 style={{ width: "140px", marginTop: "6px" }}>
+                      {item.date}
+                    </h6>
+                    <hr className="m-2"></hr>
+                    <img
+                      src={item?.day?.condition?.icon}
+                      style={{ width: "80px" }}
+                    />
+                    <hr className="m-2"></hr>
+
+                    <h6>{item?.day?.maxtemp_c}</h6>
+                  </div>
+                ))}
+                <div className="DivDays"></div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );
